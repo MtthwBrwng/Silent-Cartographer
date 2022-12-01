@@ -4,7 +4,7 @@ import {BsGithub} from "react-icons/bs";
 
 export const DefaultLayout = ({children}) => {
     return (
-        <AppShell sx={{overflow: "hidden"}} header={<DefaultHeader/>}>
+        <AppShell sx={{overflow: "hidden"}} padding={10} header={<DefaultHeader/>}>
             {children}
         </AppShell>
     )

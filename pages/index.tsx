@@ -3,11 +3,12 @@ import {useListTransactionsQuery} from "../graphql/generated";
 import React, {useState} from "react";
 import {DefaultLayout} from "../layouts/DefaultLayout";
 import {useCursorPagination} from "../hooks/use-cursor-pagination";
+import {useMediaQuery} from "@mantine/hooks";
 
 export default function Home() {
     const {onNextPage, onPreviousPage, nextToken, hasPrev} = useCursorPagination()
-
     const [deviceRecordTypeFilter, setDeviceRecordTypeFilter] = useState<string[] | undefined>(["Device-Create", "Device-Media", "Device-Event"])
+    const matches = useMediaQuery('(max-width: 900px)', false);
 
     const {status, data, error, isLoading, isRefetching} = useListTransactionsQuery({
         tagFilter: [
@@ -32,15 +33,15 @@ export default function Home() {
 
     return (
         <Container size={"md"} sx={{overflow: "hidden"}}>
-            <Stack spacing={25}>
+            <Stack spacing={10}>
                 <Group align={"center"} position={"apart"} noWrap>
-                    <Title sx={{fontFamily: "monospace", whiteSpace: "nowrap"}}>SiLo Chips</Title>
+                    <Title order={matches ? 2 : 1} sx={{fontFamily: "monospace", whiteSpace: "nowrap"}}>SiLo Chips</Title>
                     <Group spacing={10} noWrap>
                         <Button size={"xs"} radius={"lg"} onClick={() => onPreviousPage()} disabled={!hasPrev}>Back</Button>
                         <Button size={"xs"} radius={"lg"} onClick={() => onNextPage(cursor)} loading={isRefetching}>Next</Button>
                     </Group>
                 </Group>
-                <Chip.Group position={"center"} value={deviceRecordTypeFilter} onChange={(value => setDeviceRecordTypeFilter(value))} multiple>
+                <Chip.Group position={matches ? "center" : "apart"} pb={10} value={deviceRecordTypeFilter} onChange={(value => setDeviceRecordTypeFilter(value))} multiple>
                     <Chip size={"md"} value="Device-Create">Device Create</Chip>
                     <Chip size={"md"} value="Device-Media">Device Media</Chip>
                     <Chip size={"md"} value="Device-Event">Device Event</Chip>
@@ -71,7 +72,7 @@ export default function Home() {
                         }
 
                         return (
-                            <Stack key={`Edge-${i}`}>
+                            <Stack spacing={25} key={`Edge-${i}`}>
                                 {tags?.deviceRecordType === "Device-Create" && (
                                     <SimpleGrid breakpoints={[{cols: 1, maxWidth: "sm"}]} cols={2}>
                                         <Group sx={{fontFamily: "monospace"}} noWrap>
@@ -170,8 +171,6 @@ export default function Home() {
                     })}
                 </Stack>
             </Stack>
-
-
         </Container>
     )
 }
