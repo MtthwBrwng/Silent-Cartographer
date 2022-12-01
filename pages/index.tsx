@@ -1,6 +1,7 @@
-import {Center, Container, Group, Loader, Paper, SimpleGrid, Stack, Text} from "@mantine/core";
+import {Center, Container, Group, Loader, Menu, Paper, SimpleGrid, Stack, Text} from "@mantine/core";
 import {useListTransactionsQuery} from "../graphql/generated";
 import React from "react";
+import Divider = Menu.Divider;
 
 export default function Home() {
     const {status, data, error, isLoading} = useListTransactionsQuery({
@@ -27,14 +28,18 @@ export default function Home() {
                         const node = edge.node
 
                         return (
-                            <SimpleGrid key={`Edge-${i}`} cols={2}>
-                                {node?.tags?.map((tag) => (
-                                    <Group key={tag?.name} sx={{fontFamily: "monospace"}}>
-                                        <Text color={"dimmed"} inherit>{tag?.name}:</Text>
-                                        <Text lineClamp={1} inherit>{tag?.value}</Text>
-                                    </Group>
-                                ))}
-                            </SimpleGrid>
+                            <Stack>
+                                <SimpleGrid key={`Edge-${i}`} cols={2}>
+                                    {node?.tags?.map((tag) => (
+                                        <Group key={tag?.name} sx={{fontFamily: "monospace"}}>
+                                            <Text color={"dimmed"} inherit>{tag?.name}:</Text>
+                                            <Text lineClamp={1} inherit>{tag?.value}</Text>
+                                        </Group>
+                                    ))}
+                                </SimpleGrid>
+                                <Divider/>
+                            </Stack>
+
                         )
                     })}
                 </Stack>

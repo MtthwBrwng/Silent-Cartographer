@@ -356,19 +356,29 @@ export type ListTransactionsQueryVariables = Exact<{
 }>;
 
 
-export type ListTransactionsQuery = { __typename?: 'Query', transactions: { __typename?: 'TransactionConnection', edges: Array<{ __typename?: 'TransactionEdge', node: { __typename?: 'Transaction', tags: Array<{ __typename?: 'Tag', name: string, value: string }> } }> } };
+export type ListTransactionsQuery = { __typename?: 'Query', transactions: { __typename?: 'TransactionConnection', edges: Array<{ __typename?: 'TransactionEdge', cursor: string, node: { __typename?: 'Transaction', tags: Array<{ __typename?: 'Tag', name: string, value: string }>, block?: { __typename?: 'Block', id: string, height: number, previous: string, timestamp: number } | null } }>, pageInfo: { __typename?: 'PageInfo', hasNextPage: boolean } } };
 
 
 export const ListTransactionsDocument = `
     query ListTransactions($first: Int, $after: String, $tagFilter: [TagFilter!]) {
   transactions(first: $first, after: $after, tags: $tagFilter) {
     edges {
+      cursor
       node {
         tags {
           name
           value
         }
+        block {
+          id
+          height
+          previous
+          timestamp
+        }
       }
+    }
+    pageInfo {
+      hasNextPage
     }
   }
 }
