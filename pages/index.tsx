@@ -38,7 +38,7 @@ export default function Home() {
                     <Title order={matches ? 2 : 1} sx={{fontFamily: "monospace", whiteSpace: "nowrap"}}>SiLo Chips</Title>
                     <Group spacing={10} noWrap>
                         <Button size={"xs"} radius={"lg"} onClick={() => onPreviousPage()} disabled={!hasPrev}>Back</Button>
-                        <Button size={"xs"} radius={"lg"} onClick={() => onNextPage(cursor)} loading={isRefetching}>Next</Button>
+                        <Button size={"xs"} radius={"lg"} onClick={() => onNextPage(cursor)} disabled={!hasNextPage} loading={isRefetching}>Next</Button>
                     </Group>
                 </Group>
                 <Chip.Group position={matches ? "center" : "apart"} pb={10} value={deviceRecordTypeFilter} onChange={(value => setDeviceRecordTypeFilter(value))} multiple>
@@ -172,7 +172,7 @@ export default function Home() {
                     <Group align={"center"} pb={10} position={"right"} noWrap>
                         <Group spacing={10} noWrap>
                             <Button size={"xs"} radius={"lg"} onClick={() => onPreviousPage()} disabled={!hasPrev}>Back</Button>
-                            <Button size={"xs"} radius={"lg"} onClick={() => onNextPage(cursor)} loading={isRefetching}>Next</Button>
+                            <Button size={"xs"} radius={"lg"} onClick={() => onNextPage(cursor)} disabled={!hasNextPage} loading={isRefetching}>Next</Button>
                         </Group>
                     </Group>
                 </Stack>
