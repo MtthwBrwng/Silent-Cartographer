@@ -1,0 +1,12 @@
+query ListTransactions($first: Int, $after: String, $tagFilter: [TagFilter!]) {
+    transactions(first: $first, after: $after, tags: $tagFilter) {
+        edges {
+            node {
+                tags {
+                    name
+                    value
+                }
+            }
+        }
+    }
+}

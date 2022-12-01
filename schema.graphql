@@ -1,0 +1,247 @@
+# This file was generated based on ".graphqlconfig". Do not edit manually.
+
+schema {
+    query: Query
+}
+
+"Representation of a value transfer between wallets, in both winson and ar."
+type Amount {
+    "Amount as an AR string e.g. \\`\"0.000000000001\"\\`."
+    ar: String!
+    "Amount as a winston string e.g. \\`\"1000000000000\"\\`."
+    winston: String!
+}
+
+type Block {
+    "The block height."
+    height: Int!
+    "The block ID."
+    id: ID!
+    "The previous block ID."
+    previous: ID!
+    "The block timestamp (UTC)."
+    timestamp: Int!
+}
+
+"""
+
+Paginated result set using the GraphQL cursor spec,
+see: https://relay.dev/graphql/connections.htm.
+"""
+type BlockConnection {
+    edges: [BlockEdge!]!
+    pageInfo: PageInfo!
+}
+
+"Paginated result set using the GraphQL cursor spec."
+type BlockEdge {
+    """
+
+    The cursor value for fetching the next page.
+
+    Pass this to the \`after\` parameter in \`blocks(after: $cursor)\`, the next page will start from the next item after this.
+    """
+    cursor: String!
+    "A block object."
+    node: Block!
+}
+
+"""
+
+The data bundle containing the current data item.
+See: https://github.com/ArweaveTeam/arweave-standards/blob/master/ans/ANS-104.md.
+"""
+type Bundle {
+    "ID of the containing data bundle."
+    id: ID!
+}
+
+"Basic metadata about the transaction data payload."
+type MetaData {
+    "Size of the associated data in bytes."
+    size: String!
+    "Type is derrived from the \\`content-type\\` tag on a transaction."
+    type: String
+}
+
+"Representation of a transaction owner."
+type Owner {
+    "The owner's wallet address."
+    address: String!
+    "The owner's public key as a base64url encoded string."
+    key: String!
+}
+
+"Paginated page info using the GraphQL cursor spec."
+type PageInfo {
+    hasNextPage: Boolean!
+}
+
+"""
+
+The parent transaction for bundled transactions,
+see: https://github.com/ArweaveTeam/arweave-standards/blob/master/ans/ANS-102.md.
+"""
+type Parent {
+    id: ID!
+}
+
+"""
+
+Arweave Gateway
+Copyright (C) 2022 Permanent Data Solutions, Inc
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <https://www.gnu.org/licenses/>.
+"""
+type Query {
+    block(id: String): Block
+    blocks(
+        "A pagination cursor value, for fetching subsequent pages from a result set."
+        after: String,
+        "Result page size (max: 100)"
+        first: Int = 10,
+        "Find blocks within a given block height range."
+        height: BlockFilter,
+        "Find blocks from a list of ids."
+        ids: [ID!],
+        "Optionally specify the result sort order."
+        sort: SortOrder = HEIGHT_DESC
+    ): BlockConnection!
+    "Get a transaction by its id"
+    transaction(id: ID!): Transaction
+    "Get a paginated set of matching transactions using filters."
+    transactions(
+        "A pagination cursor value, for fetching subsequent pages from a result set."
+        after: String,
+        "Find transactions within a given block height range."
+        block: BlockFilter,
+        """
+
+        Find data items from the given data bundles.
+        See: https://github.com/ArweaveTeam/arweave-standards/blob/master/ans/ANS-104.md
+        """
+        bundledIn: [ID!],
+        "Result page size (max: 100)"
+        first: Int = 10,
+        "Find transactions from a list of ids."
+        ids: [ID!],
+        "Find transactions from a list of owner wallet addresses, or wallet owner public keys."
+        owners: [String!],
+        "Find transactions from a list of recipient wallet addresses."
+        recipients: [String!],
+        "Optionally specify the result sort order."
+        sort: SortOrder = HEIGHT_DESC,
+        "Find transactions using tags."
+        tags: [TagFilter!]
+    ): TransactionConnection!
+}
+
+type Tag {
+    "UTF-8 tag name"
+    name: String!
+    "UTF-8 tag value"
+    value: String!
+}
+
+type Transaction {
+    anchor: String!
+    "Transactions with a null block are recent and unconfirmed, if they aren't mined into a block within 60 minutes they will be removed from results."
+    block: Block
+    """
+
+    For bundled data items this references the containing bundle ID.
+    See: https://github.com/ArweaveTeam/arweave-standards/blob/master/ans/ANS-104.md
+    """
+    bundledIn: Bundle
+    data: MetaData!
+    fee: Amount!
+    id: ID!
+    owner: Owner!
+    "@deprecated Don't use, kept for backwards compatability only!"
+    parent: Parent @deprecated(reason: "Use `bundledIn`")
+    quantity: Amount!
+    recipient: String!
+    signature: String!
+    tags: [Tag!]!
+}
+
+"""
+
+Paginated result set using the GraphQL cursor spec,
+see: https://relay.dev/graphql/connections.htm.
+"""
+type TransactionConnection {
+    edges: [TransactionEdge!]!
+    pageInfo: PageInfo!
+}
+
+"Paginated result set using the GraphQL cursor spec."
+type TransactionEdge {
+    """
+
+    The cursor value for fetching the next page.
+
+    Pass this to the \`after\` parameter in \`transactions(after: $cursor)\`, the next page will start from the next item after this.
+    """
+    cursor: String!
+    "A transaction object."
+    node: Transaction!
+}
+
+"Optionally reverse the result sort order from `HEIGHT_DESC` (default) to `HEIGHT_ASC`."
+enum SortOrder {
+    "Results are sorted by the transaction block height in ascending order, with the oldest transactions appearing first, and the most recent and pending/unconfirmed appearing last."
+    HEIGHT_ASC
+    "Results are sorted by the transaction block height in descending order, with the most recent and unconfirmed/pending transactions appearing first."
+    HEIGHT_DESC
+}
+
+"The operator to apply to a tag value."
+enum TagOperator {
+    "Equal"
+    EQ
+    "Not equal"
+    NEQ
+}
+
+"Find blocks within a given range"
+input BlockFilter {
+    "Maximum block height to filter to"
+    max: Int
+    "Minimum block height to filter from"
+    min: Int
+}
+
+"Find transactions with the folowing tag name and value"
+input TagFilter {
+    "The tag name"
+    name: String!
+    "The operator to apply to to the tag filter. Defaults to EQ (equal)."
+    op: TagOperator = EQ
+    """
+
+    An array of values to match against. If multiple values are passed then transactions with _any_ matching tag value from the set will be returned.
+
+    e.g.
+
+    \`{name: "app-name", values: ["app-1"]}\`
+
+    Returns all transactions where the \`app-name\` tag has a value of \`app-1\`.
+
+    \`{name: "app-name", values: ["app-1", "app-2", "app-3"]}\`
+
+    Returns all transactions where the \`app-name\` tag has a value of either \`app-1\` _or_ \`app-2\` _or_ \`app-3\`.
+    """
+    values: [String!]!
+}
