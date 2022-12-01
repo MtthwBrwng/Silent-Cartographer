@@ -10,7 +10,7 @@ const App = ({Component, pageProps}) => {
     const Layout = Component.Layout ? Component.Layout : React.Fragment;
 
     return (
-        <MantineProvider withGlobalStyles withNormalizeCSS theme={{colorScheme: "dark"}}>
+        <MantineProvider withGlobalStyles withNormalizeCSS theme={{colorScheme: "dark", primaryColor: "indigo"}}>
             <QueryClientProvider client={queryClient}>
                 <Layout>
                     <Component {...pageProps} />

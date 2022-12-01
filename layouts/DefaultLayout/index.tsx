@@ -1,4 +1,5 @@
-import {AppShell, Container, Group, Header, Title} from "@mantine/core";
+import {Anchor, AppShell, Container, Group, Header} from "@mantine/core";
+import NextLink from "next/link";
 
 export const DefaultLayout = ({children}) => {
     return (
@@ -13,7 +14,7 @@ const DefaultHeader = () => {
         <Header height={65}>
             <Container mx={"auto"} h={"100%"}>
                 <Group align={"center"} sx={{height: "100%"}}>
-                    <Title order={2} weight={"bold"} sx={{fontFamily: "monospace"}}>Silent Cartographer</Title>
+                    <Anchor component={NextLink} href={"/"}  size={25} sx={{fontFamily: "monospace"}}>Silent Cartographer</Anchor>
                 </Group>
             </Container>
         </Header>
