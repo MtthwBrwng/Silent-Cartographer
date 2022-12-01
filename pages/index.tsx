@@ -1,23 +1,22 @@
-import {Anchor, Center, Chip, Container, Divider, Group, Loader, SimpleGrid, Stack, Text, Title} from "@mantine/core";
-import {TagOperator, useListTransactionsQuery} from "../graphql/generated";
+import {Anchor, Button, Center, Chip, Container, Divider, Group, Loader, SimpleGrid, Stack, Text, Title} from "@mantine/core";
+import {useListTransactionsQuery} from "../graphql/generated";
 import React, {useState} from "react";
 import {DefaultLayout} from "../layouts/DefaultLayout";
+import {useCursorPagination} from "../hooks/use-cursor-pagination";
 
 export default function Home() {
-    const [deviceRecordTypeFilter, setDeviceRecordTypeFilter] = useState<string[] | undefined>(["Device-Create", "Device-Media", "Device-Event"])
+    const {onNextPage, onPreviousPage, nextToken, hasPrev} = useCursorPagination()
 
+    const [deviceRecordTypeFilter, setDeviceRecordTypeFilter] = useState<string[] | undefined>(["Device-Create", "Device-Media", "Device-Event"])
 
     const {status, data, error, isLoading, isRefetching} = useListTransactionsQuery({
         tagFilter: [
             {name: "App-Name", values: ["ERS"]},
-            {
-                name: "Device-Record-Type",
-                values: deviceRecordTypeFilter
-            },
-            {name: "Device-Id", op: TagOperator.Neq, values: [""]},
+            {name: "Device-Record-Type", values: deviceRecordTypeFilter},
         ],
+        after: nextToken,
         first: 25,
-    }, {keepPreviousData: true})
+    }, {keepPreviousData: true, queryKey: ["chips", nextToken]})
 
     if (isLoading && !isRefetching) {
         return (
@@ -29,11 +28,20 @@ export default function Home() {
 
     const edges = data?.transactions?.edges
     const cursor = edges[edges.length - 1]?.cursor
+    const hasNextPage = data?.transactions?.pageInfo?.hasNextPage
 
     return (
         <Container size={"md"}>
             <Stack spacing={25}>
-                <Title sx={{fontFamily: "monospace"}}>SiLo Chips</Title>
+                <Group align={"center"} position={"apart"}>
+                    <Title sx={{fontFamily: "monospace"}}>SiLo Chips</Title>
+                    <Group spacing={10}>
+                        <Button radius={"lg"} onClick={() => onPreviousPage()} disabled={!hasPrev}>Back</Button>
+                        <Button radius={"lg"} onClick={() => onNextPage(cursor)} loading={isRefetching}>Next</Button>
+                    </Group>
+
+                </Group>
+
                 <Chip.Group position={"apart"} value={deviceRecordTypeFilter} onChange={(value => setDeviceRecordTypeFilter(value))} multiple>
                     <Chip size={"lg"} value="Device-Create">Device Create</Chip>
                     <Chip size={"lg"} value="Device-Media">Device Media</Chip>
@@ -42,9 +50,7 @@ export default function Home() {
                 <Stack spacing={25}>
                     {edges?.map((edge, i) => {
                         const node = edge.node
-
                         const meta: { name: string, description: string } = JSON.parse(safeTag(node, "Device-Token-Metadata", null))
-                        const ipfsCid = safeTag(node, "IPFS-Add", null)
 
                         let tags = {
                             appName: safeTag(node, "App-Name", null),
@@ -62,6 +68,7 @@ export default function Home() {
                             deviceTokenMetadata: safeTag(node, "Device-Token-Metadata", null),
                             deviceMinter: safeTag(node, "Device-Minter", null),
                             deviceMinterSignature: safeTag(node, "Device-Minter-Signature", null),
+                            deviceMinterChainId: safeTag(node, "Device-Minter-Chain-Id", null),
                             ipfsAdd: safeTag(node, "IPFS-Add", null),
                         }
 
@@ -107,11 +114,7 @@ export default function Home() {
                                     <SimpleGrid cols={2}>
                                         <Group sx={{fontFamily: "monospace"}} noWrap>
                                             <Text color={"dimmed"} inherit>Device Id:</Text>
-                                            <Text inherit>{truncate(safeTag(node, "Device-Id", null), 24)}</Text>
-                                        </Group>
-                                        <Group sx={{fontFamily: "monospace", whiteSpace: "nowrap"}} noWrap>
-                                            <Text color={"dimmed"} inherit>Content Type:</Text>
-                                            <Text inherit>{safeTag(node, "Content-Type", null)}</Text>
+                                            <Text inherit>{truncate(tags?.deviceId, 24)}</Text>
                                         </Group>
                                         <Group sx={{fontFamily: "monospace", whiteSpace: "nowrap"}} noWrap>
                                             <Text color={"dimmed"} inherit>Name:</Text>
@@ -123,13 +126,44 @@ export default function Home() {
                                         </Group>
                                         <Group sx={{fontFamily: "monospace", whiteSpace: "nowrap"}} noWrap>
                                             <Text color={"dimmed"} inherit>Device Minter:</Text>
-                                            <Anchor href={`https://etherscan.io/address/${safeTag(node, "Device-Minter", null)}`} inherit>{truncate(safeTag(node, "Device-Minter", null) ?? "--", 24)}</Anchor>
+                                            {tags?.deviceMinter ? (<Anchor href={`https://etherscan.io/address/${tags?.deviceMinter}`} inherit>{truncate(tags?.deviceMinter, 24)}</Anchor>) : (<Text inherit>--</Text>)}
+                                        </Group>
+                                        <Group sx={{fontFamily: "monospace"}} noWrap>
+                                            <Text color={"dimmed"} inherit>Device Signature:</Text>
+                                            <Text inherit>{truncate(tags?.deviceSignature, 24)}</Text>
+                                        </Group>
+                                        <Group sx={{fontFamily: "monospace"}} noWrap>
+                                            <Text color={"dimmed"} inherit>Device Minter Chain Id:</Text>
+                                            <Text inherit>{tags?.deviceMinterChainId}</Text>
+                                        </Group>
+                                        <Group sx={{fontFamily: "monospace", whiteSpace: "nowrap"}} noWrap>
+                                            <Text color={"dimmed"} inherit>Content Type:</Text>
+                                            {tags?.contentType ? (<Text inherit>{tags?.contentType}</Text>) : (<Text inherit>--</Text>)}
+                                        </Group>
+                                        <Group sx={{fontFamily: "monospace", whiteSpace: "nowrap"}} noWrap>
+                                            <Text color={"dimmed"} inherit>Device Record Type:</Text>
+                                            {tags?.deviceRecordType ? (<Text inherit>{tags?.deviceRecordType}</Text>) : (<Text inherit>--</Text>)}
                                         </Group>
                                     </SimpleGrid>
                                 )}
                                 {tags?.deviceRecordType === "Device-Event" && (
                                     <SimpleGrid cols={2}>
-
+                                        <Group sx={{fontFamily: "monospace"}} noWrap>
+                                            <Text color={"dimmed"} inherit>Device Id:</Text>
+                                            <Text inherit>{truncate(tags?.deviceId, 24)}</Text>
+                                        </Group>
+                                        <Group sx={{fontFamily: "monospace", whiteSpace: "nowrap"}} noWrap>
+                                            <Text color={"dimmed"} inherit>Device Address:</Text>
+                                            {tags?.deviceAddress ? (<Anchor href={`https://etherscan.io/address/${tags?.deviceAddress}`} inherit>{truncate(tags?.deviceAddress, 24)}</Anchor>) : (<Text inherit>--</Text>)}
+                                        </Group>
+                                        <Group sx={{fontFamily: "monospace", whiteSpace: "nowrap"}} noWrap>
+                                            <Text color={"dimmed"} inherit>Content Type:</Text>
+                                            {tags?.contentType ? (<Text inherit>{tags?.contentType}</Text>) : (<Text inherit>--</Text>)}
+                                        </Group>
+                                        <Group sx={{fontFamily: "monospace", whiteSpace: "nowrap"}} noWrap>
+                                            <Text color={"dimmed"} inherit>Device Record Type:</Text>
+                                            {tags?.deviceRecordType ? (<Text inherit>{tags?.deviceRecordType}</Text>) : (<Text inherit>--</Text>)}
+                                        </Group>
                                     </SimpleGrid>
                                 )}
                                 <Divider/>

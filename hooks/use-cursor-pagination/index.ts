@@ -21,6 +21,6 @@ export const useCursorPagination = () => {
         onNextPage: handleOnNextPage,
         onPreviousPage: handleOnPreviousPage,
         nextToken: nextTokenValue,
-        previousNextToken: previousTokenValues.pop()
+        hasPrev
     }
 }
