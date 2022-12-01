@@ -31,21 +31,19 @@ export default function Home() {
     const hasNextPage = data?.transactions?.pageInfo?.hasNextPage
 
     return (
-        <Container size={"md"}>
+        <Container size={"md"} sx={{overflow: "hidden"}}>
             <Stack spacing={25}>
-                <Group align={"center"} position={"apart"}>
+                <Group align={"center"} position={"apart"} noWrap>
                     <Title sx={{fontFamily: "monospace"}}>SiLo Chips</Title>
                     <Group spacing={10}>
-                        <Button radius={"lg"} onClick={() => onPreviousPage()} disabled={!hasPrev}>Back</Button>
-                        <Button radius={"lg"} onClick={() => onNextPage(cursor)} loading={isRefetching}>Next</Button>
+                        <Button size={"xs"} radius={"lg"} onClick={() => onPreviousPage()} disabled={!hasPrev}>Back</Button>
+                        <Button size={"xs"} radius={"lg"} onClick={() => onNextPage(cursor)} loading={isRefetching}>Next</Button>
                     </Group>
-
                 </Group>
-
-                <Chip.Group position={"apart"} value={deviceRecordTypeFilter} onChange={(value => setDeviceRecordTypeFilter(value))} multiple>
-                    <Chip size={"lg"} value="Device-Create">Device Create</Chip>
-                    <Chip size={"lg"} value="Device-Media">Device Media</Chip>
-                    <Chip size={"lg"} value="Device-Event">Device Event</Chip>
+                <Chip.Group position={"center"} value={deviceRecordTypeFilter} onChange={(value => setDeviceRecordTypeFilter(value))} multiple>
+                    <Chip size={"md"} value="Device-Create">Device Create</Chip>
+                    <Chip size={"md"} value="Device-Media">Device Media</Chip>
+                    <Chip size={"md"} value="Device-Event">Device Event</Chip>
                 </Chip.Group>
                 <Stack spacing={25}>
                     {edges?.map((edge, i) => {
@@ -75,7 +73,7 @@ export default function Home() {
                         return (
                             <Stack key={`Edge-${i}`}>
                                 {tags?.deviceRecordType === "Device-Create" && (
-                                    <SimpleGrid cols={2}>
+                                    <SimpleGrid breakpoints={[{cols: 1, maxWidth: "sm"}]} cols={2}>
                                         <Group sx={{fontFamily: "monospace"}} noWrap>
                                             <Text color={"dimmed"} inherit>Device Id:</Text>
                                             <Text inherit>{truncate(tags?.deviceId, 24)}</Text>
@@ -111,14 +109,14 @@ export default function Home() {
                                     </SimpleGrid>
                                 )}
                                 {tags?.deviceRecordType === "Device-Media" && (
-                                    <SimpleGrid cols={2}>
-                                        <Group sx={{fontFamily: "monospace"}} noWrap>
+                                    <SimpleGrid breakpoints={[{cols: 1, maxWidth: "sm"}]} cols={2}>
+                                        <Group sx={{fontFamily: "monospace", whiteSpace: "nowrap"}} noWrap>
                                             <Text color={"dimmed"} inherit>Device Id:</Text>
                                             <Text inherit>{truncate(tags?.deviceId, 24)}</Text>
                                         </Group>
                                         <Group sx={{fontFamily: "monospace", whiteSpace: "nowrap"}} noWrap>
                                             <Text color={"dimmed"} inherit>Name:</Text>
-                                            <Text inherit>{meta?.name}</Text>
+                                            <Text lineClamp={1} inherit>{meta?.name}</Text>
                                         </Group>
                                         <Group sx={{fontFamily: "monospace"}} noWrap>
                                             <Text color={"dimmed"} inherit>Description:</Text>
@@ -128,7 +126,7 @@ export default function Home() {
                                             <Text color={"dimmed"} inherit>Device Minter:</Text>
                                             {tags?.deviceMinter ? (<Anchor href={`https://etherscan.io/address/${tags?.deviceMinter}`} inherit>{truncate(tags?.deviceMinter, 24)}</Anchor>) : (<Text inherit>--</Text>)}
                                         </Group>
-                                        <Group sx={{fontFamily: "monospace"}} noWrap>
+                                        <Group sx={{fontFamily: "monospace", whiteSpace: "nowrap"}} noWrap>
                                             <Text color={"dimmed"} inherit>Device Signature:</Text>
                                             <Text inherit>{truncate(tags?.deviceSignature, 24)}</Text>
                                         </Group>
@@ -147,7 +145,7 @@ export default function Home() {
                                     </SimpleGrid>
                                 )}
                                 {tags?.deviceRecordType === "Device-Event" && (
-                                    <SimpleGrid cols={2}>
+                                    <SimpleGrid breakpoints={[{cols: 1, maxWidth: "sm"}]} cols={2}>
                                         <Group sx={{fontFamily: "monospace"}} noWrap>
                                             <Text color={"dimmed"} inherit>Device Id:</Text>
                                             <Text inherit>{truncate(tags?.deviceId, 24)}</Text>
