@@ -22,6 +22,8 @@
     "eslint": "8.28.0",
     "eslint-config-next": "13.0.5",
     "graphql": "^16.6.0",
+    "ipfs-core": "^0.17.0",
+    "js-ipfs": "^0.0.301",
     "next": "13.0.5",
     "react": "18.2.0",
     "react-dom": "18.2.0"

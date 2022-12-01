@@ -2,7 +2,7 @@ import {AppShell, Container, Group, Header, Title} from "@mantine/core";
 
 export const DefaultLayout = ({children}) => {
     return (
-        <AppShell header={<DefaultHeader/>}>
+        <AppShell sx={{overflow: "hidden"}} header={<DefaultHeader/>}>
             {children}
         </AppShell>
     )
