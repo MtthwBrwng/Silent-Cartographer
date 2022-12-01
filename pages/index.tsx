@@ -1,6 +1,7 @@
-import {Center, Container, Group, Loader, Menu, Paper, SimpleGrid, Stack, Text} from "@mantine/core";
+import {Center, Container, Group, Loader, Menu, Paper, SimpleGrid, Stack, Text, Title} from "@mantine/core";
 import {useListTransactionsQuery} from "../graphql/generated";
 import React from "react";
+import {DefaultLayout} from "../layouts/DefaultLayout";
 import Divider = Menu.Divider;
 
 export default function Home() {
@@ -21,8 +22,9 @@ export default function Home() {
     const edges = data?.transactions?.edges
 
     return (
-        <Container py={50}>
-            <Paper radius={"lg"} p={"md"} withBorder>
+        <Container>
+            <Stack>
+                <Title>Chips</Title>
                 <Stack>
                     {edges?.map((edge, i) => {
                         const node = edge.node
@@ -43,8 +45,9 @@ export default function Home() {
                         )
                     })}
                 </Stack>
-            </Paper>
-
+            </Stack>
         </Container>
     )
 }
+
+Home.Layout = DefaultLayout
