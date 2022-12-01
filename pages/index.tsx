@@ -6,22 +6,20 @@ import Divider = Menu.Divider;
 
 export default function Home() {
     const [nextCursor, setNextCursor] = useState<string | undefined>()
-    const {status, data, error, isLoading} = useListTransactionsQuery({
+    const {status, data, error, isLoading, isRefetching} = useListTransactionsQuery({
         tagFilter: [
             {name: "App-Name", values: ["ERS"]},
             {
                 name: "Device-Record-Type",
-                values: ["Device-Create", "Device-Media"]
+                values: ["Device-Create"]
             },
             {name: "Device-Id", op: TagOperator.Neq, values: [""]},
         ],
-        first: 100,
+        first: 25,
         after: nextCursor,
-    }, {queryKey: ["chips", nextCursor],})
+    }, {keepPreviousData: true, queryKey: ["chips", nextCursor],})
 
-    console.log(nextCursor)
-
-    if (isLoading) {
+    if (isLoading && !isRefetching) {
         return (
             <Center py={50}>
                 <Loader variant={"dots"} size={"lg"}/>
@@ -30,7 +28,6 @@ export default function Home() {
     }
 
     const edges = data?.transactions?.edges
-
     const cursor = edges[edges.length - 1]?.cursor
 
     return (
@@ -38,9 +35,7 @@ export default function Home() {
             <Stack spacing={25}>
                 <Group align={"center"} position={"apart"}>
                     <Title sx={{fontFamily: "monospace"}}>SiLo Chips:</Title>
-                    <Button.Group>
-                        <Button variant={"outline"} size={"xs"} onClick={() => setNextCursor(cursor)}>Next</Button>
-                    </Button.Group>
+                    <Button variant={"outline"} size={"xs"} radius={"sm"} onClick={() => setNextCursor(cursor)} loading={isRefetching}>Next</Button>
                 </Group>
                 {edges?.map((edge, i) => {
                     const node = edge.node
@@ -57,12 +52,15 @@ export default function Home() {
                                 </Group>
                                 <Group sx={{fontFamily: "monospace", whiteSpace: "nowrap"}} noWrap>
                                     <Text color={"dimmed"} inherit>Device Address:</Text>
-                                    <Anchor href={`https://etherscan.io/address/${safeTag(node, "Device-Address", null)}`} inherit>{truncate(safeTag(node, "Device-Address", null) ?? "--", 24)}</Anchor>
+                                    <Anchor
+                                        href={`https://etherscan.io/address/${safeTag(node, "Device-Address", null)}`}
+                                        inherit>{truncate(safeTag(node, "Device-Address", null) ?? "--", 24)}</Anchor>
 
                                 </Group>
                                 <Group sx={{fontFamily: "monospace"}} noWrap>
                                     <Text color={"dimmed"} inherit>Device Manufacturer:</Text>
-                                    <Text inherit>{truncate(safeTag(node, "Device-Manufacturer", null) ?? "--", 24)}</Text>
+                                    <Text
+                                        inherit>{truncate(safeTag(node, "Device-Manufacturer", null) ?? "--", 24)}</Text>
                                 </Group>
                                 <Group sx={{fontFamily: "monospace"}} noWrap>
                                     <Text color={"dimmed"} inherit>Device Model:</Text>
