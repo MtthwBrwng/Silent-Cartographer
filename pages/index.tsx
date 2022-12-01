@@ -34,8 +34,8 @@ export default function Home() {
         <Container size={"md"} sx={{overflow: "hidden"}}>
             <Stack spacing={25}>
                 <Group align={"center"} position={"apart"} noWrap>
-                    <Title sx={{fontFamily: "monospace"}}>SiLo Chips</Title>
-                    <Group spacing={10}>
+                    <Title sx={{fontFamily: "monospace", whiteSpace: "nowrap"}}>SiLo Chips</Title>
+                    <Group spacing={10} noWrap>
                         <Button size={"xs"} radius={"lg"} onClick={() => onPreviousPage()} disabled={!hasPrev}>Back</Button>
                         <Button size={"xs"} radius={"lg"} onClick={() => onNextPage(cursor)} loading={isRefetching}>Next</Button>
                     </Group>
