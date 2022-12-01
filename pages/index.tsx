@@ -169,6 +169,12 @@ export default function Home() {
                             </Stack>
                         )
                     })}
+                    <Group align={"center"} pb={10} position={"right"} noWrap>
+                        <Group spacing={10} noWrap>
+                            <Button size={"xs"} radius={"lg"} onClick={() => onPreviousPage()} disabled={!hasPrev}>Back</Button>
+                            <Button size={"xs"} radius={"lg"} onClick={() => onNextPage(cursor)} loading={isRefetching}>Next</Button>
+                        </Group>
+                    </Group>
                 </Stack>
             </Stack>
         </Container>
