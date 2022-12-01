@@ -1,4 +1,5 @@
-import { useQuery, UseQueryOptions } from '@tanstack/react-query';
+import {useInfiniteQuery, UseInfiniteQueryOptions, useQuery, UseQueryOptions} from '@tanstack/react-query';
+
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
@@ -6,52 +7,53 @@ export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: 
 export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
 
 function fetcher<TData, TVariables>(query: string, variables?: TVariables) {
-  return async (): Promise<TData> => {
-    const res = await fetch("https://arweave.net/graphql", {
-    method: "POST",
-    ...({"headers":{"Content-Type":"application/json"}}),
-      body: JSON.stringify({ query, variables }),
-    });
+    return async (): Promise<TData> => {
+        const res = await fetch("https://arweave.net/graphql", {
+            method: "POST",
+            ...({"headers": {"Content-Type": "application/json"}}),
+            body: JSON.stringify({query, variables}),
+        });
 
-    const json = await res.json();
+        const json = await res.json();
 
-    if (json.errors) {
-      const { message } = json.errors[0];
+        if (json.errors) {
+            const {message} = json.errors[0];
 
-      throw new Error(message);
+            throw new Error(message);
+        }
+
+        return json.data;
     }
-
-    return json.data;
-  }
 }
+
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
-  ID: string;
-  String: string;
-  Boolean: boolean;
-  Int: number;
-  Float: number;
+    ID: string;
+    String: string;
+    Boolean: boolean;
+    Int: number;
+    Float: number;
 };
 
 /** Representation of a value transfer between wallets, in both winson and ar. */
 export type Amount = {
-  __typename?: 'Amount';
-  /** Amount as an AR string e.g. \`"0.000000000001"\`. */
-  ar: Scalars['String'];
-  /** Amount as a winston string e.g. \`"1000000000000"\`. */
-  winston: Scalars['String'];
+    __typename?: 'Amount';
+    /** Amount as an AR string e.g. \`"0.000000000001"\`. */
+    ar: Scalars['String'];
+    /** Amount as a winston string e.g. \`"1000000000000"\`. */
+    winston: Scalars['String'];
 };
 
 export type Block = {
-  __typename?: 'Block';
-  /** The block height. */
-  height: Scalars['Int'];
-  /** The block ID. */
-  id: Scalars['ID'];
-  /** The previous block ID. */
-  previous: Scalars['ID'];
-  /** The block timestamp (UTC). */
-  timestamp: Scalars['Int'];
+    __typename?: 'Block';
+    /** The block height. */
+    height: Scalars['Int'];
+    /** The block ID. */
+    id: Scalars['ID'];
+    /** The previous block ID. */
+    previous: Scalars['ID'];
+    /** The block timestamp (UTC). */
+    timestamp: Scalars['Int'];
 };
 
 /**
@@ -59,30 +61,30 @@ export type Block = {
  * see: https://relay.dev/graphql/connections.htm.
  */
 export type BlockConnection = {
-  __typename?: 'BlockConnection';
-  edges: Array<BlockEdge>;
-  pageInfo: PageInfo;
+    __typename?: 'BlockConnection';
+    edges: Array<BlockEdge>;
+    pageInfo: PageInfo;
 };
 
 /** Paginated result set using the GraphQL cursor spec. */
 export type BlockEdge = {
-  __typename?: 'BlockEdge';
-  /**
-   * The cursor value for fetching the next page.
-   *
-   * Pass this to the \`after\` parameter in \`blocks(after: $cursor)\`, the next page will start from the next item after this.
-   */
-  cursor: Scalars['String'];
-  /** A block object. */
-  node: Block;
+    __typename?: 'BlockEdge';
+    /**
+     * The cursor value for fetching the next page.
+     *
+     * Pass this to the \`after\` parameter in \`blocks(after: $cursor)\`, the next page will start from the next item after this.
+     */
+    cursor: Scalars['String'];
+    /** A block object. */
+    node: Block;
 };
 
 /** Find blocks within a given range */
 export type BlockFilter = {
-  /** Maximum block height to filter to */
-  max?: InputMaybe<Scalars['Int']>;
-  /** Minimum block height to filter from */
-  min?: InputMaybe<Scalars['Int']>;
+    /** Maximum block height to filter to */
+    max?: InputMaybe<Scalars['Int']>;
+    /** Minimum block height to filter from */
+    min?: InputMaybe<Scalars['Int']>;
 };
 
 /**
@@ -90,33 +92,33 @@ export type BlockFilter = {
  * See: https://github.com/ArweaveTeam/arweave-standards/blob/master/ans/ANS-104.md.
  */
 export type Bundle = {
-  __typename?: 'Bundle';
-  /** ID of the containing data bundle. */
-  id: Scalars['ID'];
+    __typename?: 'Bundle';
+    /** ID of the containing data bundle. */
+    id: Scalars['ID'];
 };
 
 /** Basic metadata about the transaction data payload. */
 export type MetaData = {
-  __typename?: 'MetaData';
-  /** Size of the associated data in bytes. */
-  size: Scalars['String'];
-  /** Type is derrived from the \`content-type\` tag on a transaction. */
-  type?: Maybe<Scalars['String']>;
+    __typename?: 'MetaData';
+    /** Size of the associated data in bytes. */
+    size: Scalars['String'];
+    /** Type is derrived from the \`content-type\` tag on a transaction. */
+    type?: Maybe<Scalars['String']>;
 };
 
 /** Representation of a transaction owner. */
 export type Owner = {
-  __typename?: 'Owner';
-  /** The owner's wallet address. */
-  address: Scalars['String'];
-  /** The owner's public key as a base64url encoded string. */
-  key: Scalars['String'];
+    __typename?: 'Owner';
+    /** The owner's wallet address. */
+    address: Scalars['String'];
+    /** The owner's public key as a base64url encoded string. */
+    key: Scalars['String'];
 };
 
 /** Paginated page info using the GraphQL cursor spec. */
 export type PageInfo = {
-  __typename?: 'PageInfo';
-  hasNextPage: Scalars['Boolean'];
+    __typename?: 'PageInfo';
+    hasNextPage: Scalars['Boolean'];
 };
 
 /**
@@ -124,8 +126,8 @@ export type PageInfo = {
  * see: https://github.com/ArweaveTeam/arweave-standards/blob/master/ans/ANS-102.md.
  */
 export type Parent = {
-  __typename?: 'Parent';
-  id: Scalars['ID'];
+    __typename?: 'Parent';
+    id: Scalars['ID'];
 };
 
 /**
@@ -146,13 +148,13 @@ export type Parent = {
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 export type Query = {
-  __typename?: 'Query';
-  block?: Maybe<Block>;
-  blocks: BlockConnection;
-  /** Get a transaction by its id */
-  transaction?: Maybe<Transaction>;
-  /** Get a paginated set of matching transactions using filters. */
-  transactions: TransactionConnection;
+    __typename?: 'Query';
+    block?: Maybe<Block>;
+    blocks: BlockConnection;
+    /** Get a transaction by its id */
+    transaction?: Maybe<Transaction>;
+    /** Get a paginated set of matching transactions using filters. */
+    transactions: TransactionConnection;
 };
 
 
@@ -174,7 +176,7 @@ export type Query = {
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 export type QueryBlockArgs = {
-  id?: InputMaybe<Scalars['String']>;
+    id?: InputMaybe<Scalars['String']>;
 };
 
 
@@ -196,11 +198,11 @@ export type QueryBlockArgs = {
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 export type QueryBlocksArgs = {
-  after?: InputMaybe<Scalars['String']>;
-  first?: InputMaybe<Scalars['Int']>;
-  height?: InputMaybe<BlockFilter>;
-  ids?: InputMaybe<Array<Scalars['ID']>>;
-  sort?: InputMaybe<SortOrder>;
+    after?: InputMaybe<Scalars['String']>;
+    first?: InputMaybe<Scalars['Int']>;
+    height?: InputMaybe<BlockFilter>;
+    ids?: InputMaybe<Array<Scalars['ID']>>;
+    sort?: InputMaybe<SortOrder>;
 };
 
 
@@ -222,7 +224,7 @@ export type QueryBlocksArgs = {
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 export type QueryTransactionArgs = {
-  id: Scalars['ID'];
+    id: Scalars['ID'];
 };
 
 
@@ -244,86 +246,86 @@ export type QueryTransactionArgs = {
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 export type QueryTransactionsArgs = {
-  after?: InputMaybe<Scalars['String']>;
-  block?: InputMaybe<BlockFilter>;
-  bundledIn?: InputMaybe<Array<Scalars['ID']>>;
-  first?: InputMaybe<Scalars['Int']>;
-  ids?: InputMaybe<Array<Scalars['ID']>>;
-  owners?: InputMaybe<Array<Scalars['String']>>;
-  recipients?: InputMaybe<Array<Scalars['String']>>;
-  sort?: InputMaybe<SortOrder>;
-  tags?: InputMaybe<Array<TagFilter>>;
+    after?: InputMaybe<Scalars['String']>;
+    block?: InputMaybe<BlockFilter>;
+    bundledIn?: InputMaybe<Array<Scalars['ID']>>;
+    first?: InputMaybe<Scalars['Int']>;
+    ids?: InputMaybe<Array<Scalars['ID']>>;
+    owners?: InputMaybe<Array<Scalars['String']>>;
+    recipients?: InputMaybe<Array<Scalars['String']>>;
+    sort?: InputMaybe<SortOrder>;
+    tags?: InputMaybe<Array<TagFilter>>;
 };
 
 /** Optionally reverse the result sort order from `HEIGHT_DESC` (default) to `HEIGHT_ASC`. */
 export enum SortOrder {
-  /** Results are sorted by the transaction block height in ascending order, with the oldest transactions appearing first, and the most recent and pending/unconfirmed appearing last. */
-  HeightAsc = 'HEIGHT_ASC',
-  /** Results are sorted by the transaction block height in descending order, with the most recent and unconfirmed/pending transactions appearing first. */
-  HeightDesc = 'HEIGHT_DESC'
+    /** Results are sorted by the transaction block height in ascending order, with the oldest transactions appearing first, and the most recent and pending/unconfirmed appearing last. */
+    HeightAsc = 'HEIGHT_ASC',
+    /** Results are sorted by the transaction block height in descending order, with the most recent and unconfirmed/pending transactions appearing first. */
+    HeightDesc = 'HEIGHT_DESC'
 }
 
 export type Tag = {
-  __typename?: 'Tag';
-  /** UTF-8 tag name */
-  name: Scalars['String'];
-  /** UTF-8 tag value */
-  value: Scalars['String'];
+    __typename?: 'Tag';
+    /** UTF-8 tag name */
+    name: Scalars['String'];
+    /** UTF-8 tag value */
+    value: Scalars['String'];
 };
 
 /** Find transactions with the folowing tag name and value */
 export type TagFilter = {
-  /** The tag name */
-  name: Scalars['String'];
-  /** The operator to apply to to the tag filter. Defaults to EQ (equal). */
-  op?: InputMaybe<TagOperator>;
-  /**
-   * An array of values to match against. If multiple values are passed then transactions with _any_ matching tag value from the set will be returned.
-   *
-   * e.g.
-   *
-   * \`{name: "app-name", values: ["app-1"]}\`
-   *
-   * Returns all transactions where the \`app-name\` tag has a value of \`app-1\`.
-   *
-   * \`{name: "app-name", values: ["app-1", "app-2", "app-3"]}\`
-   *
-   * Returns all transactions where the \`app-name\` tag has a value of either \`app-1\` _or_ \`app-2\` _or_ \`app-3\`.
-   */
-  values: Array<Scalars['String']>;
+    /** The tag name */
+    name: Scalars['String'];
+    /** The operator to apply to to the tag filter. Defaults to EQ (equal). */
+    op?: InputMaybe<TagOperator>;
+    /**
+     * An array of values to match against. If multiple values are passed then transactions with _any_ matching tag value from the set will be returned.
+     *
+     * e.g.
+     *
+     * \`{name: "app-name", values: ["app-1"]}\`
+     *
+     * Returns all transactions where the \`app-name\` tag has a value of \`app-1\`.
+     *
+     * \`{name: "app-name", values: ["app-1", "app-2", "app-3"]}\`
+     *
+     * Returns all transactions where the \`app-name\` tag has a value of either \`app-1\` _or_ \`app-2\` _or_ \`app-3\`.
+     */
+    values: Array<Scalars['String']>;
 };
 
 /** The operator to apply to a tag value. */
 export enum TagOperator {
-  /** Equal */
-  Eq = 'EQ',
-  /** Not equal */
-  Neq = 'NEQ'
+    /** Equal */
+    Eq = 'EQ',
+    /** Not equal */
+    Neq = 'NEQ'
 }
 
 export type Transaction = {
-  __typename?: 'Transaction';
-  anchor: Scalars['String'];
-  /** Transactions with a null block are recent and unconfirmed, if they aren't mined into a block within 60 minutes they will be removed from results. */
-  block?: Maybe<Block>;
-  /**
-   * For bundled data items this references the containing bundle ID.
-   * See: https://github.com/ArweaveTeam/arweave-standards/blob/master/ans/ANS-104.md
-   */
-  bundledIn?: Maybe<Bundle>;
-  data: MetaData;
-  fee: Amount;
-  id: Scalars['ID'];
-  owner: Owner;
-  /**
-   * @deprecated Don't use, kept for backwards compatability only!
-   * @deprecated Use `bundledIn`
-   */
-  parent?: Maybe<Parent>;
-  quantity: Amount;
-  recipient: Scalars['String'];
-  signature: Scalars['String'];
-  tags: Array<Tag>;
+    __typename?: 'Transaction';
+    anchor: Scalars['String'];
+    /** Transactions with a null block are recent and unconfirmed, if they aren't mined into a block within 60 minutes they will be removed from results. */
+    block?: Maybe<Block>;
+    /**
+     * For bundled data items this references the containing bundle ID.
+     * See: https://github.com/ArweaveTeam/arweave-standards/blob/master/ans/ANS-104.md
+     */
+    bundledIn?: Maybe<Bundle>;
+    data: MetaData;
+    fee: Amount;
+    id: Scalars['ID'];
+    owner: Owner;
+    /**
+     * @deprecated Don't use, kept for backwards compatability only!
+     * @deprecated Use `bundledIn`
+     */
+    parent?: Maybe<Parent>;
+    quantity: Amount;
+    recipient: Scalars['String'];
+    signature: Scalars['String'];
+    tags: Array<Tag>;
 };
 
 /**
@@ -331,28 +333,28 @@ export type Transaction = {
  * see: https://relay.dev/graphql/connections.htm.
  */
 export type TransactionConnection = {
-  __typename?: 'TransactionConnection';
-  edges: Array<TransactionEdge>;
-  pageInfo: PageInfo;
+    __typename?: 'TransactionConnection';
+    edges: Array<TransactionEdge>;
+    pageInfo: PageInfo;
 };
 
 /** Paginated result set using the GraphQL cursor spec. */
 export type TransactionEdge = {
-  __typename?: 'TransactionEdge';
-  /**
-   * The cursor value for fetching the next page.
-   *
-   * Pass this to the \`after\` parameter in \`transactions(after: $cursor)\`, the next page will start from the next item after this.
-   */
-  cursor: Scalars['String'];
-  /** A transaction object. */
-  node: Transaction;
+    __typename?: 'TransactionEdge';
+    /**
+     * The cursor value for fetching the next page.
+     *
+     * Pass this to the \`after\` parameter in \`transactions(after: $cursor)\`, the next page will start from the next item after this.
+     */
+    cursor: Scalars['String'];
+    /** A transaction object. */
+    node: Transaction;
 };
 
 export type ListTransactionsQueryVariables = Exact<{
-  first?: InputMaybe<Scalars['Int']>;
-  after?: InputMaybe<Scalars['String']>;
-  tagFilter?: InputMaybe<Array<TagFilter> | TagFilter>;
+    first?: InputMaybe<Scalars['Int']>;
+    after?: InputMaybe<Scalars['String']>;
+    tagFilter?: InputMaybe<Array<TagFilter> | TagFilter>;
 }>;
 
 
@@ -384,14 +386,27 @@ export const ListTransactionsDocument = `
 }
     `;
 export const useListTransactionsQuery = <
-      TData = ListTransactionsQuery,
-      TError = unknown
-    >(
-      variables?: ListTransactionsQueryVariables,
-      options?: UseQueryOptions<ListTransactionsQuery, TError, TData>
-    ) =>
+    TData = ListTransactionsQuery,
+    TError = unknown
+>(
+    variables?: ListTransactionsQueryVariables,
+    options?: UseQueryOptions<ListTransactionsQuery, TError, TData>
+) =>
     useQuery<ListTransactionsQuery, TError, TData>(
-      variables === undefined ? ['ListTransactions'] : ['ListTransactions', variables],
-      fetcher<ListTransactionsQuery, ListTransactionsQueryVariables>(ListTransactionsDocument, variables),
-      options
+        variables === undefined ? ['ListTransactions'] : ['ListTransactions', variables],
+        fetcher<ListTransactionsQuery, ListTransactionsQueryVariables>(ListTransactionsDocument, variables),
+        options
+    );
+export const useInfiniteListTransactionsQuery = <
+    TData = ListTransactionsQuery,
+    TError = unknown
+>(
+    pageParamKey: keyof ListTransactionsQueryVariables,
+    variables?: ListTransactionsQueryVariables,
+    options?: UseInfiniteQueryOptions<ListTransactionsQuery, TError, TData>
+) =>
+    useInfiniteQuery<ListTransactionsQuery, TError, TData>(
+        variables === undefined ? ['ListTransactions.infinite'] : ['ListTransactions.infinite', variables],
+        (metaData) => fetcher<ListTransactionsQuery, ListTransactionsQueryVariables>(ListTransactionsDocument, {...variables, ...(metaData.pageParam ? {[pageParamKey]: metaData.pageParam} : {})})(),
+        options
     );

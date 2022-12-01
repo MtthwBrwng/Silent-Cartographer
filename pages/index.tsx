@@ -29,7 +29,7 @@ export default function Home() {
 
     const edges = data?.transactions?.edges
     const cursor = edges[edges.length - 1]?.cursor
-
+// "Device-Create",  "Device-Media", "Device-Event"
     return (
         <Container>
             <Stack spacing={25}>

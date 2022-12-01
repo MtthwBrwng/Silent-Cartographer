@@ -9,6 +9,7 @@ const config: CodegenConfig = {
         "graphql/generated.ts": {
             plugins: ['typescript', 'typescript-operations', 'typescript-react-query'],
             config: {
+                addInfiniteQuery: true,
                 fetcher: {
                     endpoint: GRAPHQL_ENDPOINT,
                     fetchParams: {headers: {'Content-Type': 'application/json'}}
