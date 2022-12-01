@@ -9,10 +9,23 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@apollo/client": "^3.7.1",
+    "@emotion/react": "^11.10.5",
+    "@mantine/core": "^5.8.4",
+    "@mantine/hooks": "^5.8.4",
+    "@mantine/next": "^5.8.4",
+    "@mantine/notifications": "^5.8.4",
+    "@mantine/nprogress": "^5.8.4",
+    "@mantine/prism": "^5.8.4",
     "eslint": "8.28.0",
     "eslint-config-next": "13.0.5",
+    "graphql": "^16.6.0",
     "next": "13.0.5",
     "react": "18.2.0",
     "react-dom": "18.2.0"
+  },
+  "devDependencies": {
+    "@types/node": "18.11.10",
+    "@types/react": "18.0.25"
   }
 }
