@@ -46,35 +46,64 @@ export default function Home() {
                         const meta: { name: string, description: string } = JSON.parse(safeTag(node, "Device-Token-Metadata", null))
                         const ipfsCid = safeTag(node, "IPFS-Add", null)
 
-                        const deviceRecordType = safeTag(node, "Device-Record-Type", null)
+                        let tags = {
+                            appName: safeTag(node, "App-Name", null),
+                            appVersion: safeTag(node, "App-Version", null),
+                            contentType: safeTag(node, "Content-Type", null),
+                            deviceRecordType: safeTag(node, "Device-Record-Type", null),
+                            deviceId: safeTag(node, "Device-Id", null),
+                            deviceEventScanner: safeTag(node, "Device-Event-Scanner", null),
+                            deviceAddress: safeTag(node, "Device-Address", null),
+                            deviceManufacture: safeTag(node, "Device-Manufacturer", null),
+                            deviceModel: safeTag(node, "Device-Model", null),
+                            deviceMerkelRoot: safeTag(node, "Device-Merkel-Root", null),
+                            deviceRegistry: safeTag(node, "Device-Registry", null),
+                            deviceSignature: safeTag(node, "Device-Signature", null),
+                            deviceTokenMetadata: safeTag(node, "Device-Token-Metadata", null),
+                            deviceMinter: safeTag(node, "Device-Minter", null),
+                            deviceMinterSignature: safeTag(node, "Device-Minter-Signature", null),
+                            ipfsAdd: safeTag(node, "IPFS-Add", null),
+                        }
 
                         return (
                             <Stack key={`Edge-${i}`}>
-                                {deviceRecordType === "Device-Create" && (
+                                {tags?.deviceRecordType === "Device-Create" && (
                                     <SimpleGrid cols={2}>
                                         <Group sx={{fontFamily: "monospace"}} noWrap>
                                             <Text color={"dimmed"} inherit>Device Id:</Text>
-                                            <Text inherit>{truncate(safeTag(node, "Device-Id", null), 24)}</Text>
+                                            <Text inherit>{truncate(tags?.deviceId, 24)}</Text>
                                         </Group>
                                         <Group sx={{fontFamily: "monospace", whiteSpace: "nowrap"}} noWrap>
                                             <Text color={"dimmed"} inherit>Device Address:</Text>
-                                            <Anchor href={`https://etherscan.io/address/${safeTag(node, "Device-Address", null)}`} inherit>{truncate(safeTag(node, "Device-Address", null) ?? "--", 24)}</Anchor>
+                                            {tags?.deviceAddress ? (<Anchor href={`https://etherscan.io/address/${tags?.deviceAddress}`} inherit>{truncate(tags?.deviceAddress, 24)}</Anchor>) : (<Text inherit>--</Text>)}
                                         </Group>
                                         <Group sx={{fontFamily: "monospace", whiteSpace: "nowrap"}} noWrap>
                                             <Text color={"dimmed"} inherit>Device Manufacturer:</Text>
-                                            <Text inherit>{truncate(safeTag(node, "Device-Manufacturer", null) ?? "--", 24)}</Text>
+                                            {tags?.deviceManufacture ? (<Text inherit>{tags?.deviceManufacture}</Text>) : (<Text inherit>--</Text>)}
                                         </Group>
-                                        <Group sx={{fontFamily: "monospace"}} noWrap>
+                                        <Group sx={{fontFamily: "monospace", whiteSpace: "nowrap"}} noWrap>
                                             <Text color={"dimmed"} inherit>Device Model:</Text>
-                                            <Text inherit>{truncate(safeTag(node, "Device-Model", null) ?? "--", 24)}</Text>
+                                            {tags?.deviceModel ? (<Text inherit>{tags?.deviceModel}</Text>) : (<Text inherit>--</Text>)}
                                         </Group>
-                                        <Group sx={{fontFamily: "monospace"}} noWrap>
+                                        <Group sx={{fontFamily: "monospace", whiteSpace: "nowrap"}} noWrap>
+                                            <Text color={"dimmed"} inherit>Device Merkel Root:</Text>
+                                            {tags?.deviceMerkelRoot ? (<Text inherit>{tags?.deviceMerkelRoot}</Text>) : (<Text inherit>--</Text>)}
+                                        </Group>
+                                        <Group sx={{fontFamily: "monospace", whiteSpace: "nowrap"}} noWrap>
+                                            <Text color={"dimmed"} inherit>Device Registry:</Text>
+                                            {tags?.deviceRegistry ? (<Text inherit>{tags?.deviceRegistry}</Text>) : (<Text inherit>--</Text>)}
+                                        </Group>
+                                        <Group sx={{fontFamily: "monospace", whiteSpace: "nowrap"}} noWrap>
+                                            <Text color={"dimmed"} inherit>Content Type:</Text>
+                                            {tags?.contentType ? (<Text inherit>{tags?.contentType}</Text>) : (<Text inherit>--</Text>)}
+                                        </Group>
+                                        <Group sx={{fontFamily: "monospace", whiteSpace: "nowrap"}} noWrap>
                                             <Text color={"dimmed"} inherit>Device Record Type:</Text>
-                                            <Text inherit>{safeTag(node, "Device-Record-Type", null)}</Text>
+                                            {tags?.deviceRecordType ? (<Text inherit>{tags?.deviceRecordType}</Text>) : (<Text inherit>--</Text>)}
                                         </Group>
                                     </SimpleGrid>
                                 )}
-                                {deviceRecordType === "Device-Media" && (
+                                {tags?.deviceRecordType === "Device-Media" && (
                                     <SimpleGrid cols={2}>
                                         <Group sx={{fontFamily: "monospace"}} noWrap>
                                             <Text color={"dimmed"} inherit>Device Id:</Text>
@@ -98,7 +127,7 @@ export default function Home() {
                                         </Group>
                                     </SimpleGrid>
                                 )}
-                                {deviceRecordType === "Device-Event" && (
+                                {tags?.deviceRecordType === "Device-Event" && (
                                     <SimpleGrid cols={2}>
 
                                     </SimpleGrid>
